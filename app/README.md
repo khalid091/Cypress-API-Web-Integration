@@ -1,4 +1,4 @@
-# Coin Trading Application
+# SDET Exercise
 
 This application consists of a WebSocket-enabled API server and a frontend web application for coin trading.
 
