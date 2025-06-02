@@ -7,7 +7,9 @@
   "scripts": {
     "start": "node server.js",
     "dev": "concurrently \"node server.js\" \"cd app && npm run dev\"",
-    "test": "jest"
+    "test": "jest",
+    "test:ws": "jest",
+    "test:file": "jest"
   },
   "dependencies": {
     "cors": "^2.8.5",

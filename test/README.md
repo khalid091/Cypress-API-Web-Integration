@@ -16,6 +16,28 @@ This project has two separate directories with their own package.json and depend
 
 Make sure to install dependencies in both directories separately.
 
+## Project Structure
+
+```
+test/
+├── cypress/                    # Cypress E2E test files
+│   ├── e2e/                   # End-to-end test specifications
+│   ├── fixtures/              # Test data and mock files
+│   ├── pages/                 # Page Object Models
+│   ├── selectors/            # Reusable selectors
+│   └── support/              # Support files and commands
+│
+├── superwstest/               # WebSocket API test files
+│   └── test/                 # WebSocket test specifications
+│
+├── .babelrc                   # Babel configuration
+├── jest.config.js            # Jest configuration
+├── cypress.config.js         # Cypress configuration
+├── package.json              # Test dependencies
+├── package-lock.json         # Lock file for dependencies
+└── README.md                 # This file
+```
+
 ## Prerequisites
 
 - Node.js (v14 or higher)
