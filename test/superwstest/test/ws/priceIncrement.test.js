@@ -45,8 +45,8 @@ describe('WebSocket - CoinB increments correctly', () => {
         });
         
         // Check if each price update shows an increase
-        expect(firstIncrease).toBeGreaterThan(0);
-        expect(secondIncrease).toBeGreaterThan(0);
+        expect(firstIncrease).toBe(1);
+        expect(secondIncrease).toBe(1);
         console.log('Step 7: Verifying price increases...', firstIncrease, secondIncrease);
         
         return false; // Stop listening after verification
