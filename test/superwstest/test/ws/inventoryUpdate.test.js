@@ -8,42 +8,36 @@ describe('WebSocket - Inventory updates correctly after purchase', () => {
     
     // Variable to store the initial amount of CoinB
     let initialInventory = null;
-    console.log('Step 2: Created variable to track inventory changes');
+    console.log('Step 2: Created variable to track inventory changes', initialInventory);
     
     // Get the dynamic server instance
-    console.log('Step 3: Getting server instance...');
     const server = getServer();
     
     // Start listening for messages and handle inventory updates
-    console.log('Step 4: Establishing WebSocket connection...');
     await server
       .ws('/')
       .expectJson((data) => {
-        console.log('Step 5: Message received from server');
+        // console.log('Step 2: Message received from server', data);
         
         if (!initialInventory) {
           // First message: Get the initial amount of CoinB
-          console.log('Step 6: Processing first message...');
           initialInventory = data.inventory.find(c => c.coinId === 3).amountOwned;
+          console.log('Step 3: Initial inventory', initialInventory);
           
           // Trigger the purchase of 1 CoinB
-          console.log('Step 7: Sending purchase request for 1 CoinB...');
+          console.log('Step 4: Sending purchase request for 1 CoinB...', purchaseCoin(3, 1));
           return purchaseCoin(3, 1);
         }
         
         // Second message: Check if the amount increased by 1
-        console.log('Step 8: Processing second message...');
         const newAmount = data.inventory.find(c => c.coinId === 3).amountOwned;
-        
-        console.log('Step 9: Verifying inventory update...');
         expect(newAmount).toBe(initialInventory + 1);
-        
-        console.log('Step 10: All verifications passed!');
+        console.log('Step 5: Verifying inventory update...', newAmount);
         // Stop listening after we verify the update
         return false;
       })
       .close();
     
-    console.log('Step 11: WebSocket connection closed');
+    console.log('Step 6: WebSocket connection closed');
   });
 });
