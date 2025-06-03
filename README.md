@@ -98,7 +98,6 @@ yarn install
 1. **Cypress Tests**
    - Use page objects for better maintainability
    - Keep selectors in dedicated files
-   - Use fixtures for test data
    - Implement custom commands for common operations
 
 2. **WebSocket Tests**
