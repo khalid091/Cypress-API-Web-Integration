@@ -35,7 +35,7 @@ describe('WebSocket - Payload Shape', () => {
           reject(error);
         }
       });
-
+      // Handle WebSocket errors
       ws.on('error', (error) => {
         console.log('WebSocket error:', error.message);
         clearTimeout(timeoutId);

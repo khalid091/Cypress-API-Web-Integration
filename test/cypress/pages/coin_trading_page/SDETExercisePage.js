@@ -17,7 +17,7 @@ class SDETExercisePage {
 
 
   // Check USD Balance
-  validateUSDBalance(usdBalance) {
+  verifyUSDBalance(usdBalance) {
     // Validate the USD Balance set to $1000
     cy.findElement(sdetExerciseSelectors.usdBalance.container)
       .contains(sdetExerciseSelectors.usdBalance.text)
@@ -26,7 +26,7 @@ class SDETExercisePage {
   }
 
   // Check Available Coins
-  validateAvailableCoins() {
+  verifyAvailableCoins() {
     // Validate and log the number of available coins
     cy.findElement(sdetExerciseSelectors.ticket.name)
       .should('have.length', 4)
@@ -269,7 +269,7 @@ class SDETExercisePage {
 
   /* Validate CoinB Balance and Time Increment
   This method checks that CoinB's price increments by $1 every 1 seconds*/
-  validateCoinBBalanceAndTimeIncrement() {
+  verifyCoinBBalanceAndTimeIncrement() {
     // Get initial CoinB price
     cy.findElement(sdetExerciseSelectors.ticket.name)
       .contains(sdetExerciseSelectors.coinsAvailable.coinB)

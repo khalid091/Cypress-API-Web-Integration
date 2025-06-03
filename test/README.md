@@ -28,7 +28,9 @@ test/
 │   └── support/              # Support files and commands
 │
 ├── superwstest/               # WebSocket API test files
-│   └── test/                 # WebSocket test specifications
+│   ├── test/                 # WebSocket test specifications
+│   ├── utils/                # Utility functions and helpers
+│   └── expected/             # Expected test results and fixtures
 │
 ├── .babelrc                   # Babel configuration
 ├── jest.config.js            # Jest configuration
@@ -90,6 +92,8 @@ node server.js
 ```
 
 2. In a new terminal, run Cypress tests:
+Make sure that you target the folder "cd test" from the project root folder.
+
 ```bash
 cd test
 # Using npm
@@ -129,11 +133,15 @@ yarn jest superwstest/test/test.js
 - Located in: `cypress/e2e/`
 - Uses Page Object Model (POM) pattern
 - Tests the front-end functionality
+- Implements custom commands in `support/`
+- Uses fixtures for test data
 
 ### WebSocket Tests
 - Located in: `superwstest/test/`
 - Tests both HTTP and WebSocket endpoints
 - Verifies real-time data updates
+- Uses utility functions from `utils/`
+- Validates against expected results in `expected/`
 
 ## Configuration Files
 

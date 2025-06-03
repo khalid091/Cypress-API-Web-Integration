@@ -1,72 +1,39 @@
-# Cypress Assessment Project
+# Cypress Assessment Project - Test Suite
 
-This project consists of two main components: a web application and its test suite. Each component has its own dependencies and setup.
+This project contains the test suite for the web application, including Cypress E2E tests and WebSocket API tests.
 
-## Project Structure
+## Test Suite Structure
 
 ```
-cypress-assessment/
-├── app/                    # Main application code
-│   ├── node_modules/      # Application dependencies
-│   ├── package.json       # Application package configuration
-│   ├── server.js          # Express server implementation
-│   └── README.md          # Application setup instructions
+test/
+├── node_modules/      # Test dependencies
+├── package.json       # Test package configuration
+├── cypress/           # Cypress E2E tests
+│   ├── e2e/          # End-to-end test specifications
+│   ├── fixtures/     # Test data and mock files
+│   ├── pages/        # Page Object Models
+│   ├── selectors/    # Reusable selectors
+│   └── support/      # Support files and commands
 │
-├── test/                   # Test suite
-│   ├── node_modules/      # Test dependencies
-│   ├── package.json       # Test package configuration
-│   ├── cypress/           # Cypress E2E tests
-│   │   ├── e2e/          # End-to-end test specifications
-│   │   ├── fixtures/     # Test data and mock files
-│   │   ├── pages/        # Page Object Models
-│   │   ├── selectors/    # Reusable selectors
-│   │   └── support/      # Support files and commands
-│   │
-│   ├── superwstest/      # WebSocket API tests
-│   │   ├── test/        # WebSocket test specifications
-│   │   └── utils/       # WebSocket utilities
-│   │
-│   └── README.md         # Test setup instructions
+├── superwstest/      # WebSocket API tests
+│   ├── test/        # WebSocket test specifications
+│   └── utils/       # WebSocket utilities
 │
-└── README.md              # This file
+└── README.md         # Test setup instructions
 ```
 
-## Components
+## Dependencies
 
-### 1. Application (app/)
-- **Type**: Express.js Web Application
-- **Purpose**: Main application server
-- **Features**:
-  - REST API endpoints
-  - WebSocket server for real-time updates
-  - Coin trading functionality
-- **Dependencies**: express, cors, ws
-- **Setup**: See app/README.md
+### Required Node Modules
+- cypress: ^12.0.0 (E2E testing framework)
+- jest: ^29.0.0 (Test runner and assertions)
+- supertest: ^6.0.0 (HTTP API testing)
+- superwstest: ^2.0.0 (WebSocket API testing)
+- @cypress/xpath: ^2.0.0 (XPath support for Cypress)
+- cypress-file-upload: ^5.0.0 (File upload testing)
+- cypress-real-events: ^1.7.0 (Real browser events simulation)
 
-### 2. Test Suite (test/)
-- **Type**: Automated Testing Framework
-- **Components**:
-  - Cypress E2E Tests
-  - WebSocket API Tests
-  - REST API Tests
-- **Dependencies**: cypress, jest, supertest, superwstest
-- **Setup**: See test/README.md
-
-## Setup Instructions
-
-### Prerequisites
-- Node.js (v14 or higher)
-- npm or Yarn
-
-### Application Setup
-```bash
-cd app
-npm install
-# or
-yarn install
-```
-
-### Test Suite Setup
+### Installation
 ```bash
 cd test
 npm install
@@ -74,44 +41,73 @@ npm install
 yarn install
 ```
 
-## Running the Project
+## Testing Guide
 
-1. Start the application:
-```bash
-cd app
-npm start
-# or
-yarn start
-```
+### Cypress Web Automation Testing
 
-2. Run tests:
-```bash
-cd test
-# Run all tests
-npm test
-# or
-yarn test
+1. **Setup**
+   - Ensure the main application is running
+   - Cypress tests are located in `cypress/e2e/`
+   - Page objects are in `cypress/pages/`
+   - Selectors are centralized in `cypress/selectors/`
 
-# Run specific test suites
-npm run test:ws
-# or
-yarn test:ws
-```
+2. **Running Tests**
+   ```bash
+   # Open Cypress Test Runner
+   npx cypress open
 
-## Key Features
+   # Run tests headlessly
+   npx cypress run
 
-### API Endpoints
-- REST API for coin trading operations
-- WebSocket server for real-time price updates
-- Inventory management system
+   # Run specific test file
+   npx cypress run --spec "cypress/e2e/specific-test.cy.js"
+   ```
 
-### Testing
-- End-to-end testing with Cypress
-- WebSocket testing with superwstest
-- API testing with supertest
-- Jest for test running and assertions
+3. **Test Structure**
+   - Tests are written in JavaScript
+   - Uses Page Object Model pattern
+      - pages folder where the methods are stored in the class
+      - e2e folder where the methods become test steps for execution.
+   - Supports custom commands in `cypress/support/`
+
+### WebSocket Testing (superwstest)
+
+1. **Setup**
+   - WebSocket tests are located in `superwstest/test/`
+   - Utilities and helpers in `superwstest/utils/`
+
+2. **Running Tests**
+  Make sure that you target the "cd test" from project root folder
+
+   ```bash
+   # Run all WebSocket tests
+   npm run test:ws
+
+   # Run specific WebSocket test file
+   npm run test:ws -- test/specific-ws-test.js
+   ```
+
+3. **Test Structure**
+   - Tests use superwstest for WebSocket connections
+   - Supports real-time message testing
+   - Can test connection events and message handling
+   - Includes utilities for WebSocket connection management
+
+## Best Practices
+
+1. **Cypress Tests**
+   - Use page objects for better maintainability
+   - Keep selectors in dedicated files
+   - Use fixtures for test data
+   - Implement custom commands for common operations
+
+2. **WebSocket Tests**
+   - Test connection establishment
+   - Verify message formats
+   - Test error handling
+   - Validate real-time updates
 
 ## Notes
-- Each directory (app/ and test/) has its own `package.json` and `node_modules`
-- Dependencies are managed separately for better isolation
-- See individual README files in each directory for detailed setup instructions 
+- Ensure the main application is running before executing tests
+- Check individual test files for specific setup requirements
+- Follow the established naming conventions for test files 

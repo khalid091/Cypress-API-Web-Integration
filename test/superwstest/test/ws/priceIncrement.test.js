@@ -46,6 +46,7 @@ describe('WebSocket - CoinB increments correctly', () => {
             ws.close();
             resolve();
           }
+          // If we receive a message but haven't reached 3 updates yet, do nothing
         } catch (err) {
           console.log('Error occurred:', err.message);
           clearTimeout(timeoutId);
@@ -53,7 +54,7 @@ describe('WebSocket - CoinB increments correctly', () => {
           reject(err);
         }
       });
-
+      // Handle WebSocket errors
       ws.on('error', (err) => {
         console.log('WebSocket error:', err.message);
         clearTimeout(timeoutId);

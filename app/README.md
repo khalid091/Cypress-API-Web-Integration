@@ -2,66 +2,72 @@
 
 This application consists of a WebSocket-enabled API server and a frontend web application for coin trading.
 
-## Important Note About Project Structure
+## Project Structure
 
-This project has two separate directories with their own package.json and dependencies:
-
-1. **app/** - Contains the main application code
-   - Has its own `package.json` for application dependencies
-   - Dependencies include: express, cors, ws
-
-2. **test/** - Contains all test-related code
-   - Has its own `package.json` for test dependencies
-   - Dependencies include: cypress, jest, supertest, superwstest
-   - See test/README.md for test setup instructions
-
-Make sure to install dependencies in both directories separately.
-
-## Prerequisites
-
-- Node.js (v14 or higher)
-- npm (comes with Node.js) or Yarn (v1.22 or higher)
-
-## Installation
-
-1. Navigate to the app directory:
-```bash
-cd app
+```
+app/
+├── public/                    # Static files
+│   ├── index.html            # Main HTML file
+│   ├── styles/               # CSS styles
+│   └── scripts/              # Frontend JavaScript files
+│
+├── src/                      # Source code
+│   ├── server.js            # Main server file
+│   ├── routes/              # API route handlers
+│   ├── websocket/           # WebSocket handlers
+│   └── utils/               # Utility functions
+│
+├── package.json             # Project dependencies
+├── package-lock.json        # Lock file for dependencies
+└── README.md               # This file
 ```
 
-2. Install dependencies using npm:
-```bash
-npm install
-```
+## Dependencies
 
-Or using Yarn:
-```bash
-yarn install
-```
-
-### Required Dependencies
-
+### Core Dependencies
 ```json
 {
   "dependencies": {
-    "cors": "^2.8.5",
-    "express": "^4.18.2",
-    "ws": "^8.x"
+    "cors": "^2.8.5",        # Cross-Origin Resource Sharing
+    "express": "^4.18.2",    # Web framework
+    "ws": "^8.x"            # WebSocket implementation
+  }
+}
+```
+
+### Development Dependencies
+```json
+{
+  "devDependencies": {
+    "nodemon": "^2.x",      # Auto-restart server during development
+    "vite": "^4.x"         # Frontend build tool
   }
 }
 ```
 
 ## Running the Application
 
-### 1. Start the API Server
+### 1. Installation
 
-The API server provides both HTTP and WebSocket endpoints:
-
+1. Navigate to the app directory:
 ```bash
-# Using npm
+cd app
+```
+
+2. Install dependencies:
+```bash
+npm install
+```
+
+### 2. Starting the Server
+
+1. Start the API server:
+```bash
+# Development mode (with auto-restart)
+npm run dev
+
+# Production mode
 npm start
-# Or using Yarn
-yarn start
 ```
 
 The server will start on port 3100. You should see:
@@ -69,29 +75,26 @@ The server will start on port 3100. You should see:
 [SERVER]: Server is running at http://localhost:3100
 ```
 
-#### Available Endpoints:
+### 3. Accessing the Application
 
-- **HTTP Endpoints:**
-  - `GET /get-coins` - Returns list of available coins
-  - `GET /get-inventory` - Returns current inventory
-  - `POST /purchase-coin` - Handles coin purchases/sales
-  - `GET /` - Welcome message
+1. **API Server**:
+   - HTTP endpoints: `http://localhost:3100`
+   - WebSocket endpoint: `ws://localhost:3100`
 
-- **WebSocket Endpoint:**
-  - `ws://localhost:3100/` - Real-time coin price updates
+2. **Web Browser**:
+   - Open your browser and navigate to: `http://localhost:5713`
+   - The frontend will automatically connect to the WebSocket server
 
-### 2. Start the Frontend
+### 4. Available Endpoints
 
-In a new terminal:
+#### HTTP Endpoints
+- `GET /get-coins` - Returns list of available coins
+- `GET /get-inventory` - Returns current inventory
+- `POST /purchase-coin` - Handles coin purchases/sales
+- `GET /` - Welcome message
 
-```bash
-npm run dev
-```
-
-The frontend will start on port 5713. You can access it at:
-```
-http://localhost:5713
-```
+#### WebSocket Endpoint
+- `ws://localhost:3100/` - Real-time coin price updates
 
 ## Features
 
@@ -124,8 +127,10 @@ http://localhost:5713
    - Verify the frontend is running on port 5713
    - Check browser console for errors
 
-## Development
+## Development Notes
 
 - The server uses Express for HTTP endpoints and `ws` for WebSocket functionality
 - Price updates are sent every second
-- The server maintains state for coins and inventory 
+- The server maintains state for coins and inventory
+- Frontend is built with vanilla JavaScript and uses Vite for development
+- WebSocket connection is automatically established when the frontend loads
