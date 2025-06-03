@@ -122,9 +122,9 @@ node server.js
 ```bash
 cd test
 # Using npm
-npx jest superwstest/test/test.js
+npx jest superwstest/test/ws/
 # Or using Yarn
-yarn jest superwstest/test/test.js
+yarn jest superwstest/test/ws/
 ```
 
 ## Test Structure
@@ -137,7 +137,7 @@ yarn jest superwstest/test/test.js
 - Uses fixtures for test data
 
 ### WebSocket Tests
-- Located in: `superwstest/test/`
+- Located in: `superwstest/test/ws/`
 - Tests both HTTP and WebSocket endpoints
 - Verifies real-time data updates
 - Uses utility functions from `utils/`
@@ -162,3 +162,102 @@ yarn jest superwstest/test/test.js
 3. If Cypress tests fail:
    - Verify the application is running
    - Check if the front-end is accessible at `http://localhost:5713`
+
+# WebSocket Testing with superwstest
+
+This project demonstrates how to test WebSocket connections using `superwstest`. The tests verify that the WebSocket server sends messages in the correct format, that CoinB's price increases over time, and that the inventory updates correctly after purchasing a coin.
+
+## Setup
+
+1. **Install Dependencies:**
+   ```bash
+   yarn install
+   ```
+
+2. **Start the WebSocket Server:**
+   ```bash
+   cd ../app
+   node server.js
+   ```
+
+3. **Run the Tests:**
+   ```bash
+   cd ../test
+   yarn jest superwstest/test/ws/
+   ```
+
+## Test Files
+
+### 1. `payloadShape.test.js`
+- **Purpose:** Verifies that the WebSocket server sends messages in the correct format.
+- **Key Features:**
+  - Uses a dynamic server instance from `wsClient.js`.
+  - Includes beginner-friendly console logs to explain the test flow.
+
+### 2. `priceIncrement.test.js`
+- **Purpose:** Verifies that CoinB's price increases over time.
+- **Key Features:**
+  - Uses a dynamic server instance from `wsClient.js`.
+  - Includes beginner-friendly console logs to show price updates.
+
+### 3. `inventoryUpdate.test.js`
+- **Purpose:** Verifies that the inventory updates correctly after purchasing a coin.
+- **Key Features:**
+  - Uses a dynamic server instance from `wsClient.js`.
+  - Includes beginner-friendly console logs to show inventory changes.
+
+## WebSocket Client (`wsClient.js`)
+
+The `wsClient.js` file provides a dynamic way to connect to the WebSocket server:
+
+```js
+import request from 'superwstest';
+
+const WS_BASE_URL = process.env.WS_BASE_URL || 'http://localhost:3100';
+
+export const getServer = () => request(WS_BASE_URL);
+
+export const connectToWS = (path = '/', wsOptions = {}) => {
+  return getServer().ws(path, wsOptions);
+};
+```
+
+- **`getServer()`:** Returns a dynamic server instance.
+- **`connectToWS()`:** Connects to the WebSocket server with optional path and options.
+
+## Environment Variables
+
+You can configure the WebSocket server URL using the `WS_BASE_URL` environment variable:
+
+```bash
+WS_BASE_URL="http://myserver:4000" yarn jest superwstest/test/ws/
+```
+
+## Example Output
+
+When running the tests, you'll see console logs like:
+
+```
+Starting payload shape test...
+Connected to WebSocket server
+Received data: { coins: [...], inventory: [...], time: 0 }
+Test passed! Data format is correct
+
+Starting price increment test...
+Connected to WebSocket server
+Received price update for CoinB: $100
+Test passed! CoinB price is increasing as expected
+
+Starting inventory update test...
+Connected to WebSocket server
+Initial CoinB amount: 0
+Sending purchase request for 1 CoinB...
+Updated CoinB amount: 1
+Test passed! CoinB amount increased by 1
+```
+
+## Further Improvements
+
+- Add more tests for other WebSocket scenarios.
+- Enhance error handling and logging.
+- Integrate with CI/CD pipelines.
