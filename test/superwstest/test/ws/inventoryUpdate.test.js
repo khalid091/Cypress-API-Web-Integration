@@ -1,55 +1,33 @@
-import { connectToWS } from '../../utils/wsClient.js';
+import { getServer } from '../../utils/wsClient.js';
 import { purchaseCoin } from '../../utils/restClient.js';
 
+// This test verifies that the inventory updates correctly after purchasing a coin
 describe('WebSocket - Inventory updates correctly after purchase', () => {
   it('should reflect updated inventory for CoinB after purchase', async () => {
-    const ws = await connectToWS();
+    // Variable to store the initial amount of CoinB
     let initialInventory = null;
-
-    return new Promise((resolve, reject) => {
-      const timeout = setTimeout(() => {
-        ws.close();
-        reject(new Error('Test timed out after 10 seconds'));
-      }, 10000);
-
-      ws.on('message', async (data) => {
-        try {
-          const parsed = JSON.parse(data);
-          console.log('Step 1: Received data from server:', parsed);
-
-          if (!initialInventory) {
-            //  If this is the first message, we assume it's the initial inventory
-            initialInventory = parsed.inventory.find(c => c.coinId === 3).amountOwned;
-            console.log('Step 2: Current CoinB amount:', initialInventory);
-            await purchaseCoin(3, 1);
-            console.log('Step 3: Sent purchase request for 1 CoinB');
-          } else {
-            //  If we have already received the initial inventory, check for updates
-            const newAmount = parsed.inventory.find(c => c.coinId === 3).amountOwned;
-            //  Check if the amount has increased
-            if (newAmount === initialInventory + 1) {
-              expect(newAmount).toBe(initialInventory + 1);
-              console.log('Step 4: Test passed! CoinB amount increased to:', newAmount);
-              clearTimeout(timeout);
-              ws.close();
-              resolve();
-            }
-          }
-          //  If we receive a message but haven't updated the inventory yet, do nothing
-        } catch (error) {
-          console.log('Error occurred:', error.message);
-          clearTimeout(timeout);
-          ws.close();
-          reject(error);
+    
+    // Step 1: Get the dynamic server instance
+    const server = getServer();
+    
+    // Step 2: Start listening for messages and handle inventory updates
+    await server
+      .ws('/')
+      .expectJson((data) => {
+        if (!initialInventory) {
+          // First message: Get the initial amount of CoinB
+          initialInventory = data.inventory.find(c => c.coinId === 3).amountOwned;
+          // Trigger the purchase of 1 CoinB
+          return purchaseCoin(3, 1);
         }
-      });
-      // Handle WebSocket errors
-      ws.on('error', (error) => {
-        console.log('WebSocket error:', error.message);
-        clearTimeout(timeout);
-        ws.close();
-        reject(error);
-      });
-    });
+        
+        // Second message: Check if the amount increased by 1
+        const newAmount = data.inventory.find(c => c.coinId === 3).amountOwned;
+        expect(newAmount).toBe(initialInventory + 1);
+        
+        // Stop listening after we verify the update
+        return false;
+      })
+      .close();
   });
 });

@@ -1,66 +1,50 @@
-import { connectToWS } from '../../utils/wsClient.js';
+import { getServer } from '../../utils/wsClient.js';
 
+// This test verifies that CoinB's price increases over time
 describe('WebSocket - CoinB increments correctly', () => {
   it('CoinB should increase in price on each update', async () => {
-    const ws = await connectToWS();
-    console.log('Step 1: Connected to WebSocket server');
+    // Array to store the prices we receive
     const prices = [];
-
-    return new Promise((resolve, reject) => {
-      // Store timeout ID for cleanup
-      const timeoutId = setTimeout(() => {
-        console.log('Test timed out - did not receive enough price updates');
-        ws.close();
-        reject(new Error('Test timed out before receiving 3 price updates'));
-      }, 5000);
-
-      ws.on('message', (data) => {
-        try {
-          const parsed = JSON.parse(data);
-          const coinB = parsed.coins.find(c => c.name === 'CoinB');
-
-          if (!coinB) {
-            throw new Error('CoinB not found in coins data');
-          }
-
-          prices.push(coinB.price);
-          console.log(`Step ${prices.length}: CoinB price is now $${coinB.price}`);
-
-          if (prices.length === 3) {
-            console.log('\nStep 4: Checking price increases...');
-            const firstIncrease = prices[1] - prices[0];
-            const secondIncrease = prices[2] - prices[1];
-            
-            console.log(`First increase: $${prices[1]} - $${prices[0]} = $${firstIncrease}`);
-            console.log(`Second increase: $${prices[2]} - $${prices[1]} = $${secondIncrease}`);
-
-            // Check if prices are increasing
-            expect(firstIncrease).toBeGreaterThan(0);
-            expect(secondIncrease).toBeGreaterThan(0);
-            
-            // Log the actual increments
-            console.log(`Step 5: Price increases detected: +$${firstIncrease}, +$${secondIncrease}`);
-            console.log('Test passed! CoinB price is increasing as expected');
-
-            clearTimeout(timeoutId);
-            ws.close();
-            resolve();
-          }
-          // If we receive a message but haven't reached 3 updates yet, do nothing
-        } catch (err) {
-          console.log('Error occurred:', err.message);
-          clearTimeout(timeoutId);
-          ws.close();
-          reject(err);
+    
+    // Step 1: Get the dynamic server instance
+    const server = getServer();
+    
+    // Step 2: Start listening for messages and collect prices
+    await server
+      .ws('/')
+      .expectJson((data) => {
+        // Find CoinB in the coins array
+        const coinB = data.coins.find(c => c.name === 'CoinB');
+        
+        // If CoinB is not found, throw an error
+        if (!coinB) {
+          throw new Error('CoinB not found in coins data');
         }
-      });
-      // Handle WebSocket errors
-      ws.on('error', (err) => {
-        console.log('WebSocket error:', err.message);
-        clearTimeout(timeoutId);
-        ws.close();
-        reject(err);
-      });
-    });
+        
+        // Add the current price to our prices array
+        prices.push(coinB.price);
+        console.log(`Received price update for CoinB: $${coinB.price}`);
+        
+        // Keep listening until we have 3 price updates
+        if (prices.length < 3) {
+          return true;
+        }
+        
+        // After getting 3 prices, verify the increases
+        const firstIncrease = prices[1] - prices[0];
+        const secondIncrease = prices[2] - prices[1];
+        
+        console.log('Price increases:', {
+          first: firstIncrease,
+          second: secondIncrease
+        });
+        
+        // Check if each price update shows an increase
+        expect(firstIncrease).toBeGreaterThan(0);
+        expect(secondIncrease).toBeGreaterThan(0);
+        
+        return false; // Stop listening after verification
+      })
+      .close();
   });
 });
